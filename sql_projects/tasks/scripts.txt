@@ -1,0 +1,123 @@
+// Вариант 8
+// 1
+select name, area from mydb.country where area <= 500000;
+// 2
+select name, `year of foundation` from mydb.country where `year of foundation` between 1850 and 2000; 
+// 3
+select country.name, country.population / country.area as country_population_density,
+city.name, city.population / city.area as city_population_density
+from country
+inner join country_has_city on country.id = country_has_city.country_id
+inner join city on city.id = country_has_city.city_id
+// 4
+select * from country where name like "%a";
+
+select name from religion where name like "%ism";
+// 5
+select * from country where `territorial division` is null;
+// 6
+	select  concat(country.name,', ' ,Left(`head of country`.surname,5)) as field,
+	concat(country.`territorial division`, ' ', country.`the number of units of territorial division`) as field_2
+	from country
+	inner join `head of country` on `head of country`.country_id = country.id
+// 7
+select * from country order by population/area desc limit 10;
+// 8
+select * from city where population/area > (select population/area from city where id = 38);
+// 9
+select distinct `territorial division` from country
+// 10
+select  race, count(*) as "races count" from nationality group by race;
+
+select `form of government`, max(population/area) as "max population density" from country group by `form of government`;
+// 11
+select city.name as "city name", country.name as "country name" from city
+inner join country_has_city on city.id = country_has_city.city_id
+inner join country on country.id = country_has_city.country_id
+// 12
+select name from country
+union
+select name from city
+order by name;
+// 13 *
+select language.name from language
+inner join language_has_country on language_has_country.language_id = language.id where language_has_country.`number of carriers` = 0
+// 14
+// 14.1
+	select country.name, count(climate.name) as "number of climate zones" from country
+	inner join climate_has_country on country.id = climate_has_country.country_id
+	inner join climate on climate.id = climate_has_country.climate_id
+	group by country.name
+
+select climate.name, count(country.name) as "number of countries" from climate
+inner join climate_has_country on climate.id = climate_has_country.climate_id
+inner join country on country.id = climate_has_country.country_id
+group by climate.name;
+// 14.2
+select country.name, count(language.name) as "number of languages" from country
+inner join language_has_country on country.id = language_has_country.country_id
+inner join language on language.id = language_has_country.language_id
+group by country.name
+
+select language.name, count(country.name) as "number of countries" from language
+inner join language_has_country on language.id = language_has_country.language_id
+inner join country on country.id = language_has_country.country_id
+group by language.name;
+
+select language.name,country.name, language_has_country.`number of carriers`,
+language_has_country.`number of carriers`/country.population as "the number of carriers in percent"  from language 
+inner join language_has_country on language.id = language_has_country.language_id 
+inner join country on country.id = language_has_country.country_id where language.id = 1;
+// 14.3
+select language.name,country.name, language_has_country.`number of carriers`,
+language_has_country.`number of carriers`/country.population as "the number of carriers in percent"  from language 
+inner join language_has_country on language.id = language_has_country.language_id 
+inner join country on country.id = language_has_country.country_id where language.id = 1;
+// 14.4
+select country.name, 
+city.name, city.population/country.population as "percent"
+from country
+inner join country_has_city on country.id = country_has_city.country_id
+inner join city on city.id = country_has_city.city_id
+where city.population > 1000000;
+// 14.5
+select country.name, count(nationality.name) as "number of nationalities" from country
+inner join nationality_has_country on country.id = nationality_has_country.country_id
+inner join nationality on nationality.id = nationality_has_country.nationality_id
+group by country.name;
+
+select nationality.name, count(country.name) as "number of countries" from nationality
+inner join nationality_has_country on nationality.id = nationality_has_country.nationality_id
+inner join country on country.id = nationality_has_country.country_id
+group by nationality.name;
+
+select country.name, count(distinct nationality.race) as "number of races" from country
+inner join nationality_has_country on country.id = nationality_has_country.country_id
+inner join nationality on nationality.id = nationality_has_country.nationality_id
+group by country.name;
+//14.6 *
+select  language.name, count(nationality.name) as "nationalities count"
+from language
+inner join nationality on nationality.language_id = language.id
+group by language.name;
+//14.7
+select country.name, count(religion.name) as "number of religions" from country
+inner join religion_has_country on country.id = religion_has_country.country_id
+inner join religion on religion.id = religion_has_country.religion_id
+group by country.name
+
+
+
+// new 13
+select language.name from language where language.id not in 
+(select language_has_country.language_id from language_has_country)
+
+// new 14.6
+select nationality.race, count(nationality.language_id) as "number of languages" from nationality
+group by nationality.race;
+
+select  language.name, count( nationality.race) as "races count"
+from language 
+inner join nationality on nationality.language_id = language.id 
+group by language.name
+having count(nationality.race) > 2;
