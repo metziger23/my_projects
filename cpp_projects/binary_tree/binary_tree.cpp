@@ -131,8 +131,8 @@ template<typename T>
 void Set<T>::remove_element(T value, Node<T>* current, Node<T>* parent, Direction direction)
 {
 	if (current == nullptr) return;
-	// case 1: Node has no child
 	if (current->data == value) {
+		// case 1: Node has no child
 		if (current->pLeft == nullptr && current->pRight == nullptr) {
 			cout << value << "\t" << "has been deleted in remove_element" << endl;
 			delete current;
